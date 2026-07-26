@@ -18,7 +18,7 @@ public abstract class Pessoa : Entity
     public Arquivo Foto { get; protected set; }
     public Endereco Endereco { get; protected set; }
 
-    protected Pessoa(int id, string nome, Cpf cpf, DateOnly dataNascimento, Telefone telefone, Email email, Senha senha, Arquivo foto, Endereco endereco) : base(id)
+    public Pessoa(int id, string nome, Cpf cpf, DateOnly dataNascimento, Telefone telefone, Email email, Senha senha, Arquivo foto, Endereco endereco) : base(id)
     {
         Nome = nome;
         Cpf = cpf;

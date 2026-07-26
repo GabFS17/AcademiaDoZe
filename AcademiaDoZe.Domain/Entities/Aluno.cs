@@ -8,7 +8,7 @@ namespace AcademiaDoZe.Domain.Entities;
 
 public class Aluno : Pessoa
 {
-    public Aluno(int id, string nome, Cpf cpf, Email email, Endereco endereco) : base(id, nome, cpf, email, endereco)
+    public Aluno(int id, string nome, Cpf cpf, DateOnly dataNascimento, Telefone telefone, Email email, Senha senha, Arquivo foto, Endereco endereco) : base(id, nome, cpf, dataNascimento, telefone, email, senha, foto, endereco)
     {
 
     }
