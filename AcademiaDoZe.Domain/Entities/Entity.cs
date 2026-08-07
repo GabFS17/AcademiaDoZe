@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using AcademiaDoZe.Domain.Exceptions;
 
 namespace AcademiaDoZe.Domain.Entities;
 
@@ -9,9 +10,9 @@ public abstract class Entity
 {
     public int Id { get; protected set; }
 
-    public Entity(int id = 0)
+    protected Entity(int id = 0)
     {
-        if (id < 0) throw new Exception("ID_NEGATIVO");
+        if (id < 0) throw new DomainException("ID_NEGATIVO");
 
         Id = id;
     }

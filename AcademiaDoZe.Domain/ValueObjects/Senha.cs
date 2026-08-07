@@ -1,4 +1,6 @@
 ﻿//Gabriel Francisco de Sousa
+using AcademiaDoZe.Domain.Common;
+using AcademiaDoZe.Domain.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,4 +15,13 @@ public record Senha
     {
         Valor = valor;
     }
+    public static Result<Senha> Criar(string valor)
+    {
+        if (NormalizadoService.TextoVazioOuNulo(valor))
+            return Result<Senha>.Failure("Senha", "SENHA_OBRIGATORIA");
+        
+        
+        return Result<Senha>.Success(new Senha(valor));
+    }
+    public override string ToString() => Valor;
 }
