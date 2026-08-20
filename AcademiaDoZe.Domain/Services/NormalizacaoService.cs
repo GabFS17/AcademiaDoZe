@@ -2,10 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-
 namespace AcademiaDoZe.Domain.Services;
 
-public static partial class NormalizadoService
+public static partial class NormalizacaoService
 {
     // verifica se o texto é nulo ou vazio
     public static bool TextoVazioOuNulo(string? texto) => string.IsNullOrWhiteSpace(texto);

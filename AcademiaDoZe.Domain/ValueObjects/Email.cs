@@ -9,15 +9,14 @@ namespace AcademiaDoZe.Domain.ValueObjects;
 
 public record Email
 {
-    public string Valor {  get; }
-
+    public string Valor { get; }
     private Email(string valor)
     {
         Valor = valor;
     }
     public static Result<Email> Criar(string valor)
     {
-        var textoLimpo = NormalizadoService.LimparEspacos(valor);
+        var textoLimpo = NormalizacaoService.LimparEspacos(valor);
         if (string.IsNullOrWhiteSpace(textoLimpo) || !ValidarFormato(textoLimpo))
             return Result<Email>.Failure("Email", "EMAIL_FORMATO");
         return Result<Email>.Success(new Email(textoLimpo));

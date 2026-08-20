@@ -9,66 +9,69 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
+
+
+
 namespace AcademiaDoZe.Domain.Entities;
 
-public class Matricula : Entity
+public class Matricula : Entity, IAggregateRoot
 {
-    public Aluno AlunoMatricula { get; private set; }
+    // encapsulamento das propriedades, aplicando imutabilidade
+    public int AlunoId { get; private set; }
     public MatriculaPlano Plano { get; private set; }
     public DateOnly DataInicio { get; private set; }
-    public DateOnly DataFinal { get; private set; }
+    public DateOnly DataFim { get; private set; }
     public string Objetivo { get; private set; }
     public MatriculaRestricoes RestricoesMedicas { get; private set; }
     public string ObservacoesRestricoes { get; private set; }
     public Arquivo? LaudoMedico { get; private set; }
-
-    private Matricula(int id, Aluno alunoMatricula, MatriculaPlano plano, DateOnly dataInicio, DateOnly dataFinal, string objetivo, MatriculaRestricoes restricoesMedicas, string observacoesRestricoes, Arquivo? laudoMedico) : base(id)
+    // construtor privado para evitar instância direta
+    private Matricula(int id, int alunoId, MatriculaPlano plano, DateOnly dataInicio, DateOnly dataFim, string objetivo, MatriculaRestricoes restricoesMedicas, Arquivo? laudoMedico, string observacoesRestricoes = "") : base(id)
     {
-        AlunoMatricula = alunoMatricula;
+        AlunoId = alunoId;
         Plano = plano;
         DataInicio = dataInicio;
-        DataFinal = dataFinal;
+        DataFim = dataFim;
         Objetivo = objetivo;
         RestricoesMedicas = restricoesMedicas;
-        ObservacoesRestricoes = observacoesRestricoes;
         LaudoMedico = laudoMedico;
+        ObservacoesRestricoes = observacoesRestricoes;
     }
-    public static Result<Matricula> Criar(int id, Aluno alunoMatricula, MatriculaPlano plano, DateOnly dataInicio, DateOnly dataFinal, string objetivo, MatriculaRestricoes restricoesMedicas, string observacoesRestricoes, Arquivo? laudoMedico)
+    // método de fábrica, ponto de entrada para criar um ojeto válido
+    public static Result<Matricula> Criar(int id, Aluno aluno, MatriculaPlano plano, DateOnly dataInicio, string objetivo, MatriculaRestricoes restricoesMedicas, Arquivo? laudoMedico, string observacoesRestricoes = "")
     {
         var notifications = new List<Notification>();
-
-        if (alunoMatricula == default)
-            notifications.Add(new Notification("AlunoMatricula", "ALUNO_MATRICULA_OBRIGATORIO"));
-        if (plano == default)
-            notifications.Add(new Notification("MatriculaPlano", "PLANO_OBRIGATORIO"));
-        if (dataInicio == default)
-            notifications.Add(new Notification("DataInicio", "DATA_INICIO_OBRIGATORIA"));
-        if (dataFinal == default)
-            notifications.Add(new Notification("DataFinal", "DATA_FINAL_OBRIGATORIA"));
-        if (NormalizadoService.TextoVazioOuNulo(objetivo))
-            notifications.Add(new Notification("Objetivo", "OBJETIVO_MATRICULA_OBRIGATORIO"));
-        else objetivo = NormalizadoService.LimparEspacos(objetivo);
-
-        // alunos de 12 a 16 anos precisam de laudo medico autorizando a fazer atividades fisicas
-        if ((alunoMatricula.DataNascimento >= DateOnly.FromDateTime(DateTime.Now).AddYears(-16))
-            || (alunoMatricula.DataNascimento <= DateOnly.FromDateTime(DateTime.Now).AddYears(-12)))
+        // Validações e normalizações
+        if (aluno == null)
         {
-            if (laudoMedico == default)
-                notifications.Add(new Notification("LaudoMedico", "LAUDO_OBRIGATORIO_POR_IDADE"));
-            if (NormalizadoService.TextoVazioOuNulo(observacoesRestricoes))
-                notifications.Add(new Notification("ObservacoesRestricoes", "OBSERVACOES_RESTRICOES_OBRIGATORIO"));
+            notifications.Add(new Notification("Aluno", "ALUNO_INVALIDO"));
         }
-
-        // restrições não nulas tbm necessitam de laudo
-        if (restricoesMedicas != MatriculaRestricoes.None)
+        else if (aluno.DataNascimento > DateOnly.FromDateTime(DateTime.Today.AddYears(-16)) && laudoMedico == null)
         {
-            notifications.Add(new Notification("LaudoMedico", "LAUDO_OBRIGATORIO"));
+            notifications.Add(new Notification("LaudoMedico", "MENOR_16_LAUDO_OBRIGATORIO"));
         }
-
-        if (notifications.Count != 0)
-            return Result<Matricula>.Failure(notifications);
-
-        var matricula = new Matricula(id, alunoMatricula, plano, dataInicio, dataFinal, objetivo, restricoesMedicas, observacoesRestricoes, laudoMedico);
+        if (!Enum.IsDefined(plano)) notifications.Add(new Notification("Plano", "PLANO_INVALIDO"));
+        if (dataInicio == default) notifications.Add(new Notification("DataInicio", "DATA_INICIO_OBRIGATORIO"));
+        // Cálculo da DataFim no domínio baseado no tipo de plano
+        DateOnly dataFim = default;
+        if (Enum.IsDefined(plano) && dataInicio != default)
+        {
+            dataFim = plano switch
+            {
+                MatriculaPlano.Mensal => dataInicio.AddMonths(1),
+                MatriculaPlano.Trimestral => dataInicio.AddMonths(3),
+                MatriculaPlano.Semestral => dataInicio.AddMonths(6),
+                MatriculaPlano.Anual => dataInicio.AddMonths(12),
+                _ => default
+            };
+        }
+        if (NormalizacaoService.TextoVazioOuNulo(objetivo)) notifications.Add(new Notification("Objetivo", "OBJETIVO_OBRIGATORIO"));
+        else objetivo = NormalizacaoService.LimparEspacos(objetivo);
+        if (restricoesMedicas != MatriculaRestricoes.None && laudoMedico == null) notifications.Add(new Notification("LaudoMedico", "RESTRICOES_LAUDO_OBRIGATORIO"));
+        observacoesRestricoes = NormalizacaoService.LimparEspacos(observacoesRestricoes);
+        if (notifications.Count != 0) return Result<Matricula>.Failure(notifications);
+        // criação e retorno do objeto
+        var matricula = new Matricula(id, aluno!.Id, plano, dataInicio, dataFim, objetivo, restricoesMedicas, laudoMedico, observacoesRestricoes);
         return Result<Matricula>.Success(matricula);
     }
 }

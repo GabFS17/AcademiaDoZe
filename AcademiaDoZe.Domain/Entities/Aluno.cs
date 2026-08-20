@@ -9,22 +9,19 @@ using System.Text;
 
 namespace AcademiaDoZe.Domain.Entities;
 
-public class Aluno : Pessoa
+public class Aluno : Pessoa, IAggregateRoot
 {
-    private Aluno(int id, string nome, Cpf cpf, DateOnly dataNascimento, Telefone telefone, Email email, Endereco endereco, Senha senha, Arquivo foto) : base(id, nome, cpf, dataNascimento, telefone, email, senha, foto, endereco)
-    {
-
-    }
+    // construtor privado para evitar instância direta
+    private Aluno(int id, string nome, Cpf cpf, DateOnly dataNascimento, Telefone telefone, Email email, Endereco endereco, Senha senha, Arquivo foto) : base(id, nome, cpf, dataNascimento, telefone, email, endereco, senha, foto) { }
     // método de fábrica, ponto de entrada para criar um objeto válido
-    public static Result<Aluno> Criar(int id, string nome, string cpf, DateOnly dataNascimento, string telefone, string email, Logradouro endereco, string numero, string complemento,
-    string senha, Arquivo foto)
+    public static Result<Aluno> Criar(int id, string nome, string cpf, DateOnly dataNascimento, string telefone, string email, Logradouro endereco, string numero, string complemento, string senha, Arquivo foto)
     {
         var notifications = new List<Notification>();
         // Validações e normalizações
-        if (NormalizadoService.TextoVazioOuNulo(nome))
+        if (NormalizacaoService.TextoVazioOuNulo(nome))
             notifications.Add(new Notification("Nome", "NOME_OBRIGATORIO"));
         else
-            nome = NormalizadoService.LimparEspacos(nome);
+            nome = NormalizacaoService.LimparEspacos(nome);
         if (dataNascimento == default)
             notifications.Add(new Notification("DataNascimento", "DATA_NASCIMENTO_OBRIGATORIO"));
         else if (dataNascimento > DateOnly.FromDateTime(DateTime.Today.AddYears(-12)))
@@ -43,7 +40,17 @@ public class Aluno : Pessoa
         if (notifications.Count != 0)
             return Result<Aluno>.Failure(notifications);
         // criação e retorno do objeto
-        var aluno = new Aluno(id, nome, cpfResult.Value!, dataNascimento, telefoneResult.Value!, emailResult.Value!, enderecoResult.Value!, senhaResult.Value!, foto);
+        var aluno = new Aluno(
+        id,
+        nome,
+        cpfResult.Value!,
+        dataNascimento,
+        telefoneResult.Value!,
+        emailResult.Value!,
+        enderecoResult.Value!,
+        senhaResult.Value!,
+        foto
+        );
         return Result<Aluno>.Success(aluno);
     }
 }
