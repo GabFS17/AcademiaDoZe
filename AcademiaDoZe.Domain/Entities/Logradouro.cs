@@ -7,6 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+namespace AcademiaDoZe.Domain.Entities;
+
 public sealed class Logradouro : Entity, IAggregateRoot
 {
     // encapsulamento das propriedades, aplicando imutabilidade

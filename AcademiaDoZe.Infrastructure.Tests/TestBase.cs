@@ -20,7 +20,7 @@ public abstract class TestBase
         {
             DatabaseType.SqlServer => "Server=localhost;Database=db_academia_do_ze;User Id=sa;Password=abcBolinhas12345;TrustServerCertificate=True;Encrypt=True;",
             DatabaseType.MySql => "Server=localhost;Database=db_academia_do_ze;User Id=root;Password=abcBolinhas12345;",
-            DatabaseType.Sqlite => $"Data Source=C:\\Users\\User\\Documents\\Tio lu pt3\\DATABASES\\db_academia_do_ze.db;Cache=Shared;",
+            DatabaseType.Sqlite => $"Data Source=C:\\Users\\Gabriel\\Documents\\tio lu pt3\\DATABASES\\db_academia_do_ze.db;Cache=Shared;",
             _ => throw new ArgumentOutOfRangeException(nameof(DatabaseType), DatabaseType, "SGBD não suportado para testes.")
         };
     }
