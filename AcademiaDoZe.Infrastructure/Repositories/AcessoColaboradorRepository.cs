@@ -158,8 +158,10 @@ public class AcessoColaboradorRepository : BaseRepository, IAcessoColaboradorRep
     {
         try
         {
-            string query = $"{BaseSelectQuery} WHERE pessoa_id = {colaboradorId} ORDER BY data_hora DESC LIMIT 1";
+            string query = $"{BaseSelectQuery} WHERE pessoa_id = @ColaboradorId ORDER BY data_hora DESC LIMIT 1";
             await using var command = await CreateCommandAsync(query, cancellationToken);
+
+            command.AddParameter("@ColaboradorId", colaboradorId, DbType.Int32);
 
             await using var reader = await command.ExecuteReaderAsync(cancellationToken);
             
@@ -228,13 +230,13 @@ public class AcessoColaboradorRepository : BaseRepository, IAcessoColaboradorRep
             );
             if (result.IsFailure)
             {
-                throw new InfrastructureException("ERRO_DOMINIO_MAPEAMENTO", $"Erro de domínio ao mapear aluno ID {id}: {string.Join(", ", result.Notifications.Select(n => n.Mensagem))}");
+                throw new InfrastructureException("ERRO_DOMINIO_MAPEAMENTO", $"Erro de domínio ao mapear acesso ID {id}: {string.Join(", ", result.Notifications.Select(n => n.Mensagem))}");
             }
             return result.Value!;
         }
         catch (Exception ex) when (ex is not InfrastructureException)
         {
-            throw new InfrastructureException("ERRO_MAPEAMENTO_COLABORADOR", $"Erro ao mapear dados do aluno: {ex.Message}", ex);
+            throw new InfrastructureException("ERRO_MAPEAMENTO_ACESSO", $"Erro ao mapear dados do acesso: {ex.Message}", ex);
         }
     }
 }

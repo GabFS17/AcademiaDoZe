@@ -10,8 +10,9 @@ namespace AcademiaDoZe.Domain.Entities;
 public class AcessoColaborador : Entity, IAggregateRoot
 {
     public int ColaboradorId { get; private set; }
+    public Colaborador Colaborador { get; private set; }
     public DateTime DataHora { get; private set; }
-    private AcessoColaborador(int id, int colaboradorId, DateTime dataHora) : base(id)
+    private AcessoColaborador(int id, int colaboradorId, Colaborador colaborador, DateTime dataHora) : base(id)
     {
         ColaboradorId = colaboradorId;
         DataHora = dataHora;
@@ -25,7 +26,7 @@ public class AcessoColaborador : Entity, IAggregateRoot
             notifications.Add(new Notification("DataHora", "DATA_HORA_INTERVALO_INVALIDO"));
         if (notifications.Count != 0)
             return Result<AcessoColaborador>.Failure(notifications);
-        return Result<AcessoColaborador>.Success(new AcessoColaborador(id, colaborador!.Id, dataHora));
+        return Result<AcessoColaborador>.Success(new AcessoColaborador(id, colaborador!.Id, colaborador, dataHora));
     }
 }
 // Dependem da persistência:

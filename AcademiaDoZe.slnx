@@ -4,4 +4,7 @@
   <Project Path="AcademiaDoZe.Domain/AcademiaDoZe.Domain.csproj" />
   <Project Path="AcademiaDoZe.Infrastructure.Tests/AcademiaDoZe.Infrastructure.Tests.csproj" Id="41a3d9c4-e3e3-43d0-b4c0-95a9acd25f37" />
   <Project Path="AcademiaDoZe.Infrastructure/AcademiaDoZe.Infrastructure.csproj" Id="d4e93374-6cd6-4001-82a3-1ac284b61859" />
+  <Project Path="AcademiaDoZe.Presentation.AppMaui/AcademiaDoZe.Presentation.AppMaui.csproj" Id="fe23dd11-7dc3-4714-8a22-c2ee175a0a45">
+    <Deploy Solution="Debug|*" />
+  </Project>
 </Solution>
