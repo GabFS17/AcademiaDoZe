@@ -8,6 +8,7 @@ using AcademiaDoZe.Infrastructure.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 namespace AcademiaDoZe.Application.DependencyInjection;
 
+// Gabriel Francisco de Sousa
 public static class ApplicationDependencyInjection
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
