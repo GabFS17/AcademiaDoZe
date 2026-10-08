@@ -9,6 +9,7 @@ public partial class ConfigPage : ContentPage
     {
         InitializeComponent();
         CarregarTema();
+        CarregarBanco();
     }
     private void CarregarTema()
     {
