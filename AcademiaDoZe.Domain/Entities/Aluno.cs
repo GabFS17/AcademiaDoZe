@@ -12,6 +12,7 @@ namespace AcademiaDoZe.Domain.Entities;
 public class Aluno : Pessoa, IAggregateRoot
 {
     // construtor privado para evitar instância direta
+    
     private Aluno(int id, string nome, Cpf cpf, DateOnly dataNascimento, Telefone telefone, Email email, Endereco endereco, Senha senha, Arquivo foto) : base(id, nome, cpf, dataNascimento, telefone, email, endereco, senha, foto) { }
     // método de fábrica, ponto de entrada para criar um objeto válido
     public static Result<Aluno> Criar(int id, string nome, string cpf, DateOnly dataNascimento, string telefone, string email, Logradouro endereco, string numero, string complemento, string senha, Arquivo foto)

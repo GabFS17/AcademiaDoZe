@@ -18,6 +18,8 @@ public class Colaborador : Pessoa, IAggregateRoot
     public ColaboradorTipo Tipo { get; private set; }
     public ColaboradorVinculo Vinculo { get; private set; }
     // construtor privado para evitar instância direta
+
+    
     private Colaborador(int id, string nome, Cpf cpf, DateOnly dataNascimento, Telefone telefone, Email email, Endereco endereco, Senha senha, Arquivo foto, DateOnly dataAdmissao,
 
     ColaboradorTipo tipo, ColaboradorVinculo vinculo) : base(id, nome, cpf, dataNascimento, telefone, email, endereco, senha, foto)
